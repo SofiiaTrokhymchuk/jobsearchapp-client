@@ -5,6 +5,9 @@ import axios from "../../axios.js";
 import VacancyPreviewCard from "../vacancy/VacancyPreviewCard.js";
 import { useNavigate } from "react-router-dom";
 import handleQueryString from "../../utils/QueryStringHandler.js";
+import LocationService from "../../services/LocationService.js";
+import CategoryService from "../../services/CategoryService.js";
+import MainVacancyService from "../../services/MainVacancyService.js";
 
 function JobseekerMain() {
   const [selectedFilters, setSelectedFilters] = useState({
@@ -19,36 +22,22 @@ function JobseekerMain() {
   const [fetchIsDone, setFetchIsDone] = useState(false);
 
   useEffect(() => {
-    axios
-      .get("/categories")
-      .then((res) =>
-        res.data.categories.sort((a, b) =>
-          a.categoryName.localeCompare(b.categoryName)
-        )
-      )
-      .then((data) => setCategories(data))
-      .catch((e) => console.log(e));
-    axios
-      .get("/locations")
-      .then((res) =>
-        res.data.locations.sort((a, b) =>
-          a.locationName.localeCompare(b.locationName)
-        )
-      )
-      .then((data) => setLocations(data))
-      .catch((e) => console.log(e));
-    axios
-      .get("/vacancies")
-      .then((res) =>
-        res.data.vacancies.sort(
-          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-        )
-      )
-      .then((data) => {
-        setVacancies(data);
-      })
-      .then(() => setFetchIsDone(true))
-      .catch((e) => console.log(e));
+    CategoryService.getCategories().then((res) => {
+      if (res.status === 200) {
+        setCategories(res.data);
+      }
+    });
+    LocationService.getLocations().then((res) => {
+      if (res.status === 200) {
+        setLocations(res.data);
+      }
+    });
+    MainVacancyService.getAllVacancies().then((res) => {
+      if (res.status === 200) {
+        setVacancies(res.data);
+        setFetchIsDone(true);
+      }
+    });
   }, []);
 
   const handleFilterInputChange = (e) => {
@@ -61,19 +50,10 @@ function JobseekerMain() {
   const navigate = useNavigate();
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    console.log(selectedFilters);
     const queryString = handleQueryString(selectedFilters);
-    axios
-      .get(`/vacancies?${queryString}`)
-      .then((res) =>
-        res.data.vacancies.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        )
-      )
-      .then((data) => {
-        setVacancies(data);
-      })
-      .catch((e) => console.log(e));
+    MainVacancyService.getFillteredVacancies(queryString).then((res) => {
+      setVacancies(res.data);
+    });
     queryString === "&"
       ? navigate("/vacancies")
       : navigate(`/vacancies?${queryString}`);

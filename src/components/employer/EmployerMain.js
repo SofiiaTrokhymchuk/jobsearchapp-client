@@ -5,6 +5,8 @@ import axios from "../../axios.js";
 import ResumePreviewCard from "../resume/ResumePreviewCard.js";
 import { useNavigate } from "react-router-dom";
 import handleQueryString from "../../utils/QueryStringHandler.js";
+import MainResumeService from "../../services/MainResumeService.js";
+import LocationService from "../../services/LocationService.js";
 
 function EmployerMain() {
   const [locations, setLocations] = useState([]);
@@ -16,26 +18,17 @@ function EmployerMain() {
   });
 
   useEffect(() => {
-    axios
-      .get("/resumes")
-      .then((res) =>
-        res.data.resumes.sort(
-          (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-        )
-      )
-
-      .then((resumes) => setResumes(resumes))
-      .then(() => setFetchIsDone(true))
-      .catch((e) => console.log(e));
-    axios
-      .get("/locations")
-      .then((res) =>
-        res.data.locations.sort((a, b) =>
-          a.locationName.localeCompare(b.locationName)
-        )
-      )
-      .then((data) => setLocations(data))
-      .catch((e) => console.log(e));
+    MainResumeService.getAllResumes().then((res) => {
+      if (res.status === 200) {
+        setResumes(res.data);
+        setFetchIsDone(true);
+      }
+    });
+    LocationService.getLocations().then((res) => {
+      if (res.status === 200) {
+        setLocations(res.data);
+      }
+    });
   }, []);
 
   const handleFilterInputChange = (e) => {
@@ -49,15 +42,9 @@ function EmployerMain() {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const queryString = handleQueryString(selectedFilters);
-    axios
-      .get(`/resumes?${queryString}`)
-      .then((res) =>
-        res.data.resumes.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        )
-      )
-      .then((resumes) => setResumes(resumes))
-      .catch((e) => console.log(e));
+    MainResumeService.getFillteredResumes(queryString).then((res) => {
+      setResumes(res.data);
+    });
     queryString === "&"
       ? navigate("/resumes")
       : navigate(`/resumes?${queryString}`);
