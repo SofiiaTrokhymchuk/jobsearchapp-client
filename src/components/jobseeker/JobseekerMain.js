@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Form, Button, Container, Card } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import axios from "../../axios.js";
+import { Navbar, Form, Button, Container} from "react-bootstrap";
 import VacancyPreviewCard from "../vacancy/VacancyPreviewCard.js";
 import { useNavigate } from "react-router-dom";
 import handleQueryString from "../../utils/QueryStringHandler.js";
