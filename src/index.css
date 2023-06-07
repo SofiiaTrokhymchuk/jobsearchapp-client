@@ -1,0 +1,21 @@
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+.main-bg{
+  background-size: cover;
+  background-image: url("https://img.freepik.com/free-vector/white-background-with-wavy-lines-copy-space_23-2148822145.jpg?w=996&t=st=1685472196~exp=1685472796~hmac=f00db1e5b1121c758f070e2861a014df7962928677436dc38afce4332a72b48c");
+  background-position: center;
+  object-fit: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
